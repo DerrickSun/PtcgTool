@@ -3,7 +3,7 @@
     <aside class="sidebar">
       <div class="sidebar-logo">PTCG Tool</div>
       <ul class="sidebar-menu">
-        <li><router-link to="/" active-class="active">个人赛</router-link></li>
+        <li><router-link to="/" active-class="active" exact-active-class="active">个人赛</router-link></li>
         <li><router-link to="/team" active-class="active">团队赛</router-link></li>
         <li><router-link to="/deck-stats" active-class="active">卡组统计</router-link></li>
         <li><router-link to="/swiss-calculator" active-class="active">瑞士轮计算器</router-link></li>
@@ -13,13 +13,22 @@
     </aside>
     <div class="main-area">
       <nav class="navbar">
-        <div class="nav-left">PTCG Tool</div>
+        <div class="nav-left">
+          <button class="menu-toggle" @click="toggleSidebar">&#9776;</button>
+          <span>PTCG Tool</span>
+        </div>
         <ul class="nav-tabs">
-          <li><router-link to="/" class="nav-link" active-class="active">个人赛</router-link></li>
-          <li><router-link to="/team" class="nav-link" active-class="active">团队赛</router-link></li>
-          <li><router-link to="/deck-stats" class="nav-link" active-class="active">卡组统计</router-link></li>
-          <li><router-link to="/swiss-calculator" class="nav-link" active-class="active">瑞士轮计算器</router-link></li>
-          <li><router-link to="/about" class="nav-link" active-class="active">关于</router-link></li>
+          <li v-for="item in visibleNavItems" :key="item.path">
+            <router-link :to="item.path" class="nav-link" active-class="active" exact>{{ item.name }}</router-link>
+          </li>
+          <li v-if="hiddenNavItems.length > 0" class="dropdown">
+            <a href="#" class="nav-link more-btn" @click.prevent="toggleDropdown">更多</a>
+            <ul v-if="isDropdownOpen" class="dropdown-menu">
+              <li v-for="item in hiddenNavItems" :key="item.path">
+                <router-link :to="item.path" class="dropdown-item" active-class="active" @click="closeDropdown">{{ item.name }}</router-link>
+              </li>
+            </ul>
+          </li>
         </ul>
       </nav>
       <main class="main-content">
@@ -31,8 +40,67 @@
 
 <script>
 export default {
-  name: 'App'
-}
+  name: 'App',
+  data() {
+    return {
+      isDropdownOpen: false,
+      isSidebarVisible: false,
+      navItems: [
+        { path: '/', name: '个人赛' },
+        { path: '/team', name: '团队赛' },
+        { path: '/deck-stats', name: '卡组统计' },
+        { path: '/swiss-calculator', name: '瑞士轮计算器' },
+        { path: '/about', name: '关于' }
+      ],
+      windowWidth: window.innerWidth
+    };
+  },
+  computed: {
+    visibleNavItems() {
+      if (this.windowWidth <= 600) {
+        return this.navItems.slice(0, 1);
+      }
+      if (this.windowWidth <= 768) {
+        return this.navItems.slice(0, 3);
+      }
+      return this.navItems;
+    },
+    hiddenNavItems() {
+      if (this.windowWidth <= 600) {
+        return this.navItems.slice(1);
+      }
+      if (this.windowWidth <= 768) {
+        return this.navItems.slice(3);
+      }
+      return [];
+    }
+  },
+  methods: {
+    toggleDropdown() {
+      this.isDropdownOpen = !this.isDropdownOpen;
+    },
+    closeDropdown() {
+      this.isDropdownOpen = false;
+    },
+    toggleSidebar() {
+      this.isSidebarVisible = !this.isSidebarVisible;
+    },
+    handleResize() {
+      this.windowWidth = window.innerWidth;
+    }
+  },
+  mounted() {
+    window.addEventListener('resize', this.handleResize);
+    document.addEventListener('click', (event) => {
+      if (!this.$el.contains(event.target)) {
+        this.closeDropdown();
+      }
+    });
+  },
+  beforeUnmount() {
+    window.removeEventListener('resize', this.handleResize);
+  }
+};
 </script>
 
 <style scoped>
@@ -132,10 +200,21 @@ export default {
   z-index: 1000;
 }
 .nav-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
   font-size: 1.4rem;
   font-weight: bold;
   color: #222;
   letter-spacing: 1px;
+}
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #333;
 }
 .nav-tabs {
   display: flex;
@@ -172,6 +251,34 @@ export default {
   color: #2563eb;
   background: #e3eaf2;
 }
+.nav-tabs li.dropdown {
+  position: relative;
+}
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  list-style: none;
+  padding: 8px 0;
+  margin: 8px 0 0 0;
+  min-width: 120px;
+  z-index: 1200;
+}
+.dropdown-item {
+  display: block;
+  padding: 8px 16px;
+  color: #555;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.dropdown-item:hover, .dropdown-item.active {
+  background: #f0f0f0;
+  color: #2563eb;
+}
 .main-content {
   padding: 40px 20px;
   width: 100%;
@@ -194,23 +301,36 @@ export default {
     gap: 18px;
   }
 }
-@media (max-width: 600px) {
-  .navbar {
-    flex-direction: column;
-    height: auto;
-    padding: 10px 2vw;
+@media (max-width: 768px) {
+  .sidebar {
+    display: none; /* or transform: translateX(-100%); */
   }
-  .nav-left {
-    font-size: 1.1rem;
-    margin-bottom: 6px;
+  .main-area {
+    margin-left: 0;
+    width: 100vw;
+  }
+  .menu-toggle {
+    display: block;
   }
   .nav-tabs {
-    gap: 10px;
-    flex-wrap: wrap;
-    justify-content: center;
+    gap: 12px;
   }
-  .main-content {
-    padding: 12px 2vw;
+}
+@media (max-width: 600px) {
+  .navbar {
+    padding: 0 16px;
   }
+  .nav-left span {
+    display: none;
+  }
+}
+.nav-link.router-link-exact-active {
+  color: #2563eb;
+  font-weight: 700;
+  background: #e3eaf2;
+}
+.dropdown-item.router-link-exact-active {
+  background: #f0f0f0;
+  color: #2563eb;
 }
 </style> 

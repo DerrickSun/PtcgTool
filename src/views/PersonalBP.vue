@@ -178,9 +178,10 @@ const allDecksSelected = computed(() =>
 
 onMounted(async () => {
   try {
+    const baseUrl = import.meta.env.BASE_URL;
     const [decksResponse, matchupsResponse] = await Promise.all([
-      fetch('/data/decks.json'),
-      fetch('/data/matchups.json')
+      fetch(`${baseUrl}data/decks.json`),
+      fetch(`${baseUrl}data/matchups.json`)
     ]);
     if (!decksResponse.ok || !matchupsResponse.ok) {
       throw new Error('Network response was not ok');

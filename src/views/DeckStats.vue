@@ -100,20 +100,27 @@ export default {
   },
   methods: {
     async loadAll() {
-      const sets = JSON.parse(localStorage.getItem('sets') || await (await fetch('/data/sets.json')).text());
-      const decks = JSON.parse(localStorage.getItem('decks') || await (await fetch('/data/decks.json')).text());
-      const matchups = JSON.parse(localStorage.getItem('matchups') || await (await fetch('/data/matchups.json')).text());
+      const baseUrl = import.meta.env.BASE_URL;
+      const setsText = await (await fetch(`${baseUrl}data/sets.json`)).text();
+      const decksText = await (await fetch(`${baseUrl}data/decks.json`)).text();
+      const matchupsText = await (await fetch(`${baseUrl}data/matchups.json`)).text();
+
+      const sets = JSON.parse(localStorage.getItem('sets') || setsText);
+      const decks = JSON.parse(localStorage.getItem('decks') || decksText);
+      const matchups = JSON.parse(localStorage.getItem('matchups') || matchupsText);
+      
       this.sets = sets;
       this.selectedSetId = sets[0]?.id || 1;
       this.decks = decks.filter(d => d.set === this.selectedSetId);
       this.matchups = matchups;
     },
     refreshDecks() {
+      const baseUrl = import.meta.env.BASE_URL;
       this.decks = this.sets.length
         ? JSON.parse(localStorage.getItem('decks') || '[]').filter(d => d.set === this.selectedSetId)
         : [];
       if (!this.decks.length) {
-        fetch('/data/decks.json').then(r => r.json()).then(decks => {
+        fetch(`${baseUrl}data/decks.json`).then(r => r.json()).then(decks => {
           this.decks = decks.filter(d => d.set === this.selectedSetId);
         });
       }

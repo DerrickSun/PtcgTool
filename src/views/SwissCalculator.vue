@@ -2,29 +2,22 @@
   <div class="page-container">
     <div class="page-header">
       <h2>瑞士轮计算器</h2>
-      <p>宝可梦卡牌瑞士轮比赛计算工具</p>
+      <p>输入信息以计算晋级概率</p>
     </div>
 
     <div class="content-card">
       <form class="swiss-form" @submit.prevent>
         <div class="form-group">
           <label for="players-input">总人数</label>
-          <div class="input-wrapper">
-            <input id="players-input" type="number" v-model.number="players" min="2" max="256" required @input="autoCalculate" />
-          </div>
+          <input id="players-input" type="number" v-model.number="players" min="2" max="1024" required @input="autoCalculate" />
         </div>
         <div class="form-group">
           <label for="rounds-input">轮数</label>
-          <div class="input-wrapper">
-            <input id="rounds-input" type="number" v-model.number="rounds" min="1" max="12" required @input="autoCalculate" />
-            <span class="suggestion" v-if="suggestedRounds">（建议：{{ suggestedRounds }}）</span>
-          </div>
+          <input id="rounds-input" type="number" v-model.number="rounds" min="1" max="12" required @input="autoCalculate" :placeholder="suggestedRoundsText" />
         </div>
         <div class="form-group">
           <label for="top-input">出线人数</label>
-          <div class="input-wrapper">
-            <input id="top-input" type="number" v-model.number="top" min="1" :max="players" required @input="autoCalculate" />
-          </div>
+          <input id="top-input" type="number" v-model.number="top" min="1" :max="players" required @input="autoCalculate" />
         </div>
       </form>
 
@@ -42,7 +35,7 @@
             <tr v-for="row in resultTable" :key="row.record">
               <td>{{ row.record }}</td>
               <td>{{ row.count }}</td>
-              <td>{{ row.probability }}</td>
+              <td :style="getProbabilityStyle(row.probability)">{{ row.probability }}</td>
             </tr>
           </tbody>
         </table>
@@ -77,11 +70,19 @@ export default {
   computed: {
     suggestedRounds() {
       const found = roundSuggestTable.find(r => this.players >= r.min && this.players <= r.max);
-      return found ? found.rounds : '';
+      return found ? found.rounds : null;
+    },
+    suggestedRoundsText() {
+        return this.suggestedRounds ? `建议: ${this.suggestedRounds} 轮` : '请输入轮数';
     }
   },
   watch: {
-    players: 'autoCalculate',
+    players() {
+        if (this.suggestedRounds) {
+            this.rounds = this.suggestedRounds;
+        }
+        this.autoCalculate();
+    },
     rounds: 'autoCalculate',
     top: 'autoCalculate'
   },
@@ -124,6 +125,11 @@ export default {
         res = res * (n - i + 1) / i;
       }
       return res;
+    },
+    getProbabilityStyle(prob) {
+        if (prob === '100%') return { color: '#2e7d32', fontWeight: '600' };
+        if (prob === '0%') return { color: '#d32f2f' };
+        return {};
     }
   }
 }
@@ -140,24 +146,22 @@ export default {
   margin: 0 auto 24px auto;
   text-align: left;
 }
-
 .page-header h2 {
-  color: #333;
-  font-size: 2.5rem;
-  margin-bottom: 10px;
+  font-size: 2rem;
   font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 8px;
 }
-
 .page-header p {
-  color: #666;
-  font-size: 1.1rem;
+  color: #6b7280;
+  font-size: 1rem;
   margin: 0;
 }
 
 .content-card {
   background: white;
   border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
   padding: 32px;
   width: 100%;
   max-width: 600px;
@@ -167,98 +171,77 @@ export default {
 .swiss-form {
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: 16px 12px;
+  gap: 16px;
   align-items: center;
   margin-bottom: 36px;
 }
 .form-group {
+  /* This rule is no longer needed with the new structure */
   display: contents;
 }
-
 .form-group label {
-  grid-column: 1 / 2;
-  text-align: right;
-  color: #333;
   font-weight: 500;
-  font-size: 1.05rem;
+  color: #374151;
+  text-align: right;
+  font-size: 1rem;
 }
-
-.form-group .input-wrapper {
-  grid-column: 2 / 3;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
 .form-group input {
-  width: 120px;
-  padding: 8px 12px;
-  border: 1px solid #d0d0d0;
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #d1d5db;
   border-radius: 8px;
-  font-size: 1.05rem;
-  background: #fafbfc;
-  transition: border 0.2s;
+  font-size: 1rem;
+  background: #f9fafb;
+  transition: all 0.2s;
 }
 .form-group input:focus {
-  border-color: #007bff;
+  border-color: #4f46e5;
   outline: none;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  background: #fff;
 }
-.suggestion {
-  color: #888;
-  font-size: 0.95rem;
-  white-space: nowrap;
+.form-group input::placeholder {
+    color: #9ca3af;
 }
-.result-table-wrap {
-  margin-top: 24px;
+
+.result-table-wrap h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 1rem;
+  text-align: center;
 }
 .result-table {
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-  overflow: hidden;
+  border-collapse: collapse;
 }
 .result-table th, .result-table td {
-  border-bottom: 1px solid #f0f0f0;
-  padding: 12px 0;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 14px 8px;
   text-align: center;
-  font-size: 1.05rem;
 }
 .result-table th {
-  background: #f8f9fa;
-  color: #333;
-  font-weight: 600;
+  background: #f9fafb;
+  font-weight: 500;
+  color: #6b7280;
+  font-size: 0.9rem;
+  text-transform: uppercase;
 }
 .result-table tr:last-child td {
   border-bottom: none;
 }
+
 @media (max-width: 600px) {
-  .page-container {
-    padding: 24px 16px;
-  }
-  .content-card {
-    padding: 24px 16px;
-  }
   .swiss-form {
-    grid-template-columns: 1fr;
-    gap: 8px;
+    grid-template-columns: 80px 1fr; /* Fixed label width */
+    gap: 12px;
   }
   .form-group label {
     text-align: left;
-    margin-bottom: 4px;
-    grid-column: 1 / 2;
-  }
-  .form-group .input-wrapper {
-    grid-column: 1 / 2;
-  }
-  .result-table th, .result-table td {
-    padding: 8px 0;
-    font-size: 0.98rem;
+    white-space: nowrap;
   }
 }
+
 /* 隐藏数字输入框的加减号 */
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
