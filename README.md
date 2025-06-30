@@ -1,46 +1,95 @@
-# PTCG Tool - 宝可梦卡牌工具
+# PTCG Tool - A Modern Pokémon TCG Utility
 
-一个专为宝可梦卡牌游戏设计的工具集合，旨在为玩家提供更好的游戏体验。
+A sleek, modern, and intelligent web-based utility for Pokémon TCG players. This tool is designed to assist with tournament preparation, offering features from win-rate tracking to advanced Ban/Pick (BP) strategic analysis.
 
-## 功能模块
+**[➡️ Live Demo Here](https://derricksun.github.io/PtcgTool/)**
 
-- **个人赛BP** - 个人赛Ban/Pick工具
-- **卡组统计** - 卡组分析与统计
-- **瑞士轮计算器** - 比赛配对与积分计算
-- **关于** - 项目信息
+---
 
-## 技术栈
+## ✨ Key Features
 
-### 前端
-- Vue 3
-- Vue Router 4
-- Vite
-- CSS3
+This application is built as a Single Page Application (SPA) using Vue 3 and Vite, focusing on providing a fast and intuitive user experience.
 
-### 后端
-- 预留文件夹，待开发
+### 🃏 Personal BP (Ban/Pick) Assistant
+The core feature of the application. It provides a powerful, multi-layered strategic analysis for a 3-deck vs 3-deck ban/pick phase.
 
-## 快速开始
+- **Intuitive Deck Selection**: Easily configure your three decks and your opponent's three decks in a clean, unified interface.
+- **Win-Rate Matrix**: Instantly generates a 3x3 grid displaying the head-to-head win percentages for every possible matchup, color-coded for quick assessment.
+- **Level 1 Analysis**: Provides a straightforward recommendation for your "first-move" ban, targeting the opponent's deck that poses the greatest overall threat to your lineup.
+- **Level 5 Analysis**: Simulates a smarter opponent. It assumes the opponent will ban your strongest deck and then provides a complete "counter-move" strategy, recommending your best ban and pick under this less-than-ideal scenario.
 
-### 安装依赖
-```bash
-npm install
-```
+### 📊 Deck Stats
+A comprehensive tool for managing and viewing matchup statistics.
 
-### 开发模式
-```bash
-npm run dev
-```
+- **Dynamic Win-Rate Matrix**: View a full matrix of win rates between all available decks.
+- **Set Filtering**: Filter the matrix to only include data relevant to a specific card set or format.
+- **Inline Editing**: Quickly update win-rate data directly within the table for easy management.
 
-### 构建生产版本
-```bash
-npm run build
-```
+### 🧮 Swiss Calculator
+A handy utility for tournament players to calculate their odds.
 
-### 预览生产版本
-```bash
-npm run preview
-```
+- **Advancement Calculation**: Based on the number of players, rounds, and top cut size, it calculates the required points and potential scenarios for advancing to the next stage.
+
+---
+
+## 🛠️ Technologies Used
+
+- **Frontend**: [Vue 3](https://vuejs.org/) (using Composition API)
+- **Build Tool**: [Vite](https://vitejs.dev/)
+- **Styling**: Vanilla CSS3 with a focus on modern, responsive design.
+- **Deployment**: [GitHub Pages](https://pages.github.com/)
+
+---
+
+## 🚀 Getting Started
+
+To run this project on your local machine, follow these simple steps.
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) (version 16.x or newer recommended)
+- [npm](https://www.npmjs.com/) or a compatible package manager
+
+### Installation & Local Development
+
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/DerrickSun/PtcgTool.git
+    cd PtcgTool
+    ```
+
+2.  **Install dependencies:**
+    ```bash
+    npm install
+    ```
+
+3.  **Run the development server:**
+    ```bash
+    npm run dev
+    ```
+    The application will be available at `http://localhost:5173` (or another port if 5173 is in use).
+
+### Deployment
+
+This project is configured for easy deployment to GitHub Pages.
+
+1.  **Push your code** to the `main` branch of your GitHub repository.
+
+2.  **Run the deployment script:**
+    ```bash
+    npm run deploy
+    ```
+    This script will first build the project into the `dist` folder and then automatically push the contents of that folder to a `gh-pages` branch on your repository, which will trigger the GitHub Pages deployment.
+
+---
+
+## 📂 Project Data
+
+The tool's data is intentionally kept in simple JSON files for easy viewing and modification. You can find them in the `public/data/` directory.
+
+-   `decks.json`: A list of all available decks with their IDs and names.
+-   `matchups.json`: The core win-rate data, structured as a nested object mapping `deckId` to opponent `deckId` and win rate.
+-   `sets.json`: Defines the different card sets or formats for filtering on the Deck Stats page.
 
 ## 项目结构
 
