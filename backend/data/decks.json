@@ -1,0 +1,14 @@
+[
+  { "id": 1, "enName": "Guillong", "zhName": "鬼龙", "set": 1 },
+  { "id": 2, "enName": "LTB", "zhName": "LTB", "set": 1 },
+  { "id": 3, "enName": "Shanaiduo", "zhName": "沙奈朵", "set": 1 },
+  { "id": 4, "enName": "Milidun", "zhName": "密勒顿", "set": 1 },
+  { "id": 5, "enName": "Gujianbao", "zhName": "古剑豹", "set": 1 },
+  { "id": 6, "enName": "TurboMew", "zhName": "涡轮梦幻", "set": 1 },
+  { "id": 7, "enName": "FusionMew", "zhName": "汇流梦幻", "set": 1 },
+  { "id": 8, "enName": "Shuixiong", "zhName": "水熊", "set": 1 },
+  { "id": 9, "enName": "Chunbailuo", "zhName": "纯白洛", "set": 1 },
+  { "id": 10, "enName": "Yijiluo", "zhName": "一击洛", "set": 1 },
+  { "id": 11, "enName": "Kabishou", "zhName": "卡比兽", "set": 1 },
+  { "id": 12, "enName": "Zhousilvbu", "zhName": "宙斯吕布", "set": 1 }
+] 
